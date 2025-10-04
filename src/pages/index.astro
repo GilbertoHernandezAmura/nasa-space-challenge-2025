@@ -1,18 +1,271 @@
 ---
 import "../styles/global.css";
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+import Image from "astro/components/Image.astro";
+import heroBg from "../img/testing-bg-hero.png";
+import teamTeledetectados from "../img/team-teledetectados.jpeg";
+
 const titlePage: string =
-	"Teledetectados - International NASA Space Apps Challenge 2025";
+	"Rutas de datos hacia ciudades y asentamientos humanos saludables";
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang="es" data-theme="light">
 	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{titlePage}</title>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Teledetectados - NASA Space Apps Challenge</title>
+		<style>
+			@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+		</style>
 	</head>
-	<body>
-		<h1>{titlePage}</h1>
+	<body class="font-sans bg-gray-50 antialiased scroll-smooth">
+		<!-- MENÚ DE NAVEGACIÓN (STICKY) -->
+		<Navigation />
+		<main>
+			<!-- 1. SECCIÓN HERO (INICIO) -->
+			<section
+				id="inicio"
+				class="hero min-h-[85vh] bg-base-100 p-4 md:p-12"
+			>
+				<div class="hero-content text-center max-w-5xl flex-col">
+					<div class="max-w-4xl">
+						<h1
+							class="text-4xl sm:text-6xl md:text-7xl font-extrabold text-nasa-blue leading-tight mb-4"
+						>
+							<span class="block text-secondary"
+								>NASA SPACE APPS CHALLENGE</span
+							>
+							Hacia ciudades y asentamientos humanos saludables
+						</h1>
+						<p
+							class="py-6 text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto"
+						>
+							Aprovechamos el poder del big data de la NASA para
+							generar <em>insights</em> cruciales, probando en un caso
+							de estudio real cómo la ciencia espacial redefine el
+							bienestar urbano.
+						</p>
+						<a
+							href="#proyecto"
+							class="btn btn-primary btn-lg text-white shadow-xl hover:shadow-2xl transform hover:scale-105 transition duration-300 font-bold"
+						>
+							Descubre Nuestro Proyecto
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- 2. SECCIÓN DEL PROYECTO -->
+			<section
+				id="proyecto"
+				class="py-16 md:py-24 bg-gray-50 border-t border-gray-200"
+			>
+				<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+					<h2
+						class="text-4xl md:text-5xl font-bold text-center text-nasa-blue mb-12"
+					>
+						Nuestro Proyecto: Ciudades Saludables y Predecibles
+					</h2>
+
+					<div class="space-y-16">
+						<!-- DEFINICIÓN DEL PROBLEMA -->
+						<div
+							class="card bg-white shadow-xl p-6 md:p-10 border-t-4 border-primary/70 mb-10"
+						>
+							<h3
+								class="text-3xl font-semibold mb-4 text-neutral"
+							>
+								Problemática
+							</h3>
+							<p class="text-gray-600 leading-relaxed text-lg">
+								La principal problemática del crecimiento urbano
+								acelerado y sin planeamiento reside en la
+								ausencia de una metodología predictiva que
+								determine hacia dónde y cómo debe expandirse una
+								ciudad para minimizar el impacto ambiental sin
+								sacrificar la calidad de vida de sus habitantes.
+								El crecimiento no planificado, como el que
+								afecta a Merlo, San Luis (nuestro caso de
+								estudio), opera a ciegas, arriesgando el capital
+								natural (bosque nativo) y la sostenibilidad de
+								los recursos. Resolvemos esta brecha ofreciendo
+								la evidencia geoespacial generada por el
+								análisis de los datos abiertos de la NASA para
+								guiar la expansión de manera inteligente y
+								resiliente.
+							</p>
+						</div>
+					</div>
+
+					<!-- OBJETIVO -->
+					<div
+						class="card bg-white shadow-xl p-6 md:p-10 border-t-4 border-secondary/70 mb-10"
+					>
+						<h3 class="text-3xl font-semibold mb-4 text-neutral">
+							Objetivo del Proyecto
+						</h3>
+						<p class="text-gray-600 leading-relaxed text-lg">
+							Crear un procedimiento replicable y escalable para
+							medir la capacidad de carga ecológica y social de
+							asentamientos humanos. Usando datos abiertos de la
+							NASA y el caso de estudio de Merlo, San Luis. Este
+							procedimiento no solo determinará la sostenibilidad
+							actual, sino que establecerá una metodología probada
+							para cualquier urbanización con características
+							similares. Nuestro objetivo es transformar la
+							inteligencia espacial en un estándar para la
+							planificación urbana saludable y resiliente a nivel
+							global.
+						</p>
+					</div>
+
+					<!-- PROPUESTA -->
+					<div
+						class="card bg-white shadow-xl p-6 md:p-10 border-t-4 border-accent/70 mb-10"
+					>
+						<h3 class="text-3xl font-semibold mb-4 text-neutral">
+							Propuesta
+						</h3>
+						<p class="text-gray-600 leading-relaxed text-lg">
+							Proponemos una solución basada en una arquitectura
+							[Tecnología clave] que procesa los datasets
+							[Mencionar datasets clave de la NASA] mediante un
+							algoritmo de [Tipo de algoritmo: Machine Learning,
+							Simulación, etc.]. La salida es una interfaz de
+							usuario simple y poderosa.
+						</p>
+					</div>
+
+					<!-- PROCESO (USANDO LISTAS PARA CLARIDAD) -->
+					<div
+						class="card bg-white shadow-xl p-6 md:p-10 border-t-4 border-neutral/70 mb-10"
+					>
+						<h3 class="text-3xl font-semibold mb-4 text-neutral">
+							Proceso: Nuestro Viaje de 48 Horas
+						</h3>
+						<ol
+							class="steps steps-vertical lg:steps-horizontal w-full text-left"
+						>
+							<li data-content="1" class="step step-primary">
+								Brainstorming & Selección de Challenge
+							</li>
+							<li data-content="2" class="step step-primary">
+								Adquisición y Limpieza de Datos
+							</li>
+							<li data-content="3" class="step step-primary">
+								Planteamiento de la solución/proceso
+							</li>
+							<li data-content="4" class="step">
+								Ejecución con caso de estudio
+							</li>
+						</ol>
+						<p class="text-gray-600 leading-relaxed text-lg mt-6">
+							Desde la ideación hasta el prototipo final, nuestro
+							proceso se centró en la **metodología ágil**,
+							permitiendo iteraciones rápidas y validación
+							constante con los datos disponibles.
+						</p>
+					</div>
+
+					<!-- RESULTADOS -->
+					<div
+						class="card bg-white shadow-xl p-6 md:p-10 border-t-4 border-primary"
+					>
+						<h3 class="text-3xl font-semibold mb-4 text-neutral">
+							Resultados
+						</h3>
+						<div class="alert alert-success shadow-lg">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="stroke-current shrink-0 h-6 w-6"
+								fill="none"
+								viewBox="0 0 24 24"
+								><path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+								></path></svg
+							>
+							<span class="text-lg font-medium"
+								>¡Procedimiento con caso de estudio terminado!</span
+							>
+						</div>
+						<p class="text-gray-600 leading-relaxed text-lg mt-4">
+							Logramos aplicar este procedimiento innovador para
+							realizar el caso de estudio en Merlo, San Luis. El
+							sistema final es escalable y replicable para otras
+							urbanizaciones con características similares.
+						</p>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<!-- 3. SECCIÓN DEL EQUIPO -->
+		<section id="equipo" class="py-16 md:py-24 bg-base-200">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+				<h2
+					class="text-4xl md:text-5xl font-bold text-center text-nasa-blue mb-12"
+				>
+					Conoce al Team Teledetectados
+				</h2>
+
+				<!-- Layout responsivo: imagen y texto -->
+				<div
+					class="flex flex-col lg:flex-row items-center justify-center gap-10"
+				>
+					<!-- Columna de la Imagen -->
+					<div class="lg:w-1/3 w-full flex justify-center">
+						<div
+							class="avatar shadow-2xl rounded-box overflow-hidden w-full max-w-xs sm:max-w-md lg:max-w-full"
+						>
+							<!-- Placeholder de imagen -->
+							<Image
+								src={teamTeledetectados}
+								alt="Foto del equipo del Space Apps Challenge"
+								class="object-cover w-full h-auto"
+								loading="lazy"
+							/>
+						</div>
+					</div>
+
+					<!-- Columna del Texto -->
+					<div
+						class="lg:w-2/3 w-full text-center lg:text-left mt-8 lg:mt-0"
+					>
+						<h3 class="text-3xl font-semibold text-neutral mb-4">
+							Unidos por la Ciencia y la Innovación
+						</h3>
+						<p
+							class="text-gray-700 leading-relaxed text-lg space-y-4"
+						>
+							Somos un equipo multidisciplinario de seis
+							integrantes (dos docentes y tres estudiantes),
+							provenientes de la UNLC y otras instituciones.
+							Nuestra fuerza reside en la combinación de
+							Planificación Territorial, Ciencias de la Atmósfera,
+							Ingenierías (Recursos Hídricos, Ambiental y
+							Mecatrónica).
+						</p>
+						<p class="text-gray-700 leading-relaxed text-lg mt-4">
+							Esta sinergia de conocimientos fue esencial para
+							desarrollar un procedimiento de análisis innovador y
+							replicable. Utilizamos nuestra experiencia conjunta
+							para transformar la compleja información geoespacial
+							de la NASA en rutas de datos accionables para la
+							planificación de asentamientos saludables, probando
+							su eficacia en un caso de estudio real de
+							sostenibilidad urbana.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
 	</body>
+
+	<!-- 4. FOOTER -->
+	<Footer />
 </html>
