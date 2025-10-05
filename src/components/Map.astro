@@ -29,11 +29,9 @@ const { id, center, zoom, title, subtitle, description, layers } = Astro.props;
 const layersJson = JSON.stringify(layers);
 ---
 
-<hr class="border-t border-gray-200 lg:max-w-5xl mx-auto my-12" />
-
 <section
     id={`mapa-${id}`}
-    class="py-16 md:py-24 bg-gray-50 lg:max-w-5xl mx-auto"
+    class="py-16 md:py-12 bg-gray-50 lg:max-w-5xl mx-auto"
 >
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <h2
