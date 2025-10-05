@@ -1,0 +1,258 @@
+---
+// 1. Definición de la estructura de datos (Props)
+interface GeoJsonLayerConfig {
+    name: string; // Nombre a mostrar en el control de capas
+    gistUrl: string;
+    // Las propiedades 'style' son flexibles para polígonos (color, fillOpacity) o puntos (radius, fillColor)
+    style: {
+        color: string;
+        fillOpacity: number;
+        weight: number;
+        radius?: number; // Para las capas de puntos
+    };
+    addToMap: boolean;
+}
+
+interface Props {
+    id: string;
+    center: [number, number];
+    zoom: number;
+    title: string;
+    subtitle: string;
+    description: string;
+    layers: GeoJsonLayerConfig[];
+}
+
+const { id, center, zoom, title, subtitle, description, layers } = Astro.props;
+
+// 2. Serializar las capas para el script del lado del cliente
+const layersJson = JSON.stringify(layers);
+---
+
+<hr class="border-t border-gray-200 lg:max-w-5xl mx-auto my-12" />
+
+<section
+    id={`mapa-${id}`}
+    class="py-16 md:py-24 bg-gray-50 lg:max-w-5xl mx-auto"
+>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <h2
+            class="text-4xl md:text-5xl font-bold text-center text-nasa-blue mb-12"
+        >
+            {title}
+        </h2>
+
+        <div
+            class="card bg-white shadow-2xl p-4 md:p-8 border-t-4 border-primary/90"
+        >
+            <h3 class="text-3xl font-semibold mb-6 text-neutral">
+                {subtitle}
+            </h3>
+
+            <div
+                id={`leaflet-map-container-${id}`}
+                class="h-[500px] w-full rounded-md overflow-hidden z-0"
+            >
+            </div>
+
+            <p class="text-gray-600 leading-relaxed text-lg mt-6">
+                {description}
+            </p>
+        </div>
+    </div>
+</section>
+
+<script type="module" define:vars={{ center, zoom, layersJson, id }}>
+    if (typeof L !== "undefined") {
+        const INITIAL_CENTER = center;
+        const INITIAL_ZOOM = zoom;
+        const geoJsonLayersConfig = JSON.parse(layersJson);
+        const mapContainerId = `leaflet-map-container-${id}`;
+
+        const map = L.map(mapContainerId).setView(INITIAL_CENTER, INITIAL_ZOOM);
+
+        // --- 1. CAPAS BASE ---
+        const osmLayer = L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution: "© OpenStreetMap contributors",
+            },
+        ).addTo(map);
+
+        const newStamenTerrainLayer = L.tileLayer(
+            "https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png",
+            {
+                attribution: "© Stamen Terrain, © OpenStreetMap contributors",
+                maxZoom: 18,
+            },
+        );
+
+        const baseMaps = {
+            OpenStreetMap: osmLayer,
+            "Topográfico (Stamen)": newStamenTerrainLayer,
+        };
+
+        const overlayMaps = {};
+        const geojsonPromises = [];
+
+        // --- 2. FUNCIÓN DE CARGA GENERALIZADA (MODIFICADA) ---
+
+        /**
+         * Función para determinar el texto del popup de forma inteligente.
+         * PRIORIDAD: 1. 'gna', 2. 'name', 3. Primera propiedad no vacía.
+         */
+        function getPopupText(properties, layerName) {
+            // 1. Prioridad: Campo "gna"
+            if (properties.hasOwnProperty("gna") && properties.gna) {
+                return properties.gna;
+            }
+
+            // 2. Segunda Prioridad: Campos comunes (por si acaso)
+            const keysToTry = [
+                "name",
+                "Name",
+                "nombre",
+                "NOM",
+                "title",
+                "Title",
+            ];
+            for (const key of keysToTry) {
+                if (properties.hasOwnProperty(key) && properties[key]) {
+                    return properties[key];
+                }
+            }
+
+            // 3. Último Recurso: El primer valor no nulo de cualquier propiedad
+            const firstValue = Object.values(properties).find(
+                (val) => val !== null && val !== undefined && val !== "",
+            );
+
+            // Si el valor es numérico, lo convertimos a cadena
+            return String(firstValue || `Elemento en capa ${layerName}`);
+        }
+
+        /**
+         * Carga la capa GeoJSON y configura las opciones de Leaflet.
+         */
+        function loadGeoJSONFromGist(
+            gistUrl,
+            layerName,
+            layerStyle,
+            addToMap = true,
+        ) {
+            return fetch(gistUrl)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(
+                            `Error al cargar ${layerName}: ${response.statusText}`,
+                        );
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    const geoJsonOptions = {
+                        // 1. Configuración de Popups
+                        onEachFeature: (feature, layer) => {
+                            if (feature.properties) {
+                                // Usa la función ajustada para obtener el nombre
+                                const popupText = getPopupText(
+                                    feature.properties,
+                                    layerName,
+                                );
+                                layer.bindPopup(
+                                    `<strong>${layerName}:</strong><br>${popupText}`,
+                                );
+                            }
+                        },
+
+                        // 2. SOLUCIÓN DE ESTILOS FLEXIBLES: Usa `style` como función para manejar Polígonos/Líneas
+                        style: function (feature) {
+                            // Si es Point o MultiPoint, se ignora 'style' y se usa 'pointToLayer'
+                            if (
+                                feature.geometry.type !== "Point" &&
+                                feature.geometry.type !== "MultiPoint"
+                            ) {
+                                return layerStyle; // Aplica estilo normal a Polígonos/Líneas
+                            }
+                            return {}; // Retorna un objeto vacío para puntos, para que `pointToLayer` tome el control
+                        },
+
+                        // 3. Renderiza Point/MultiPoint como L.circleMarker
+                        pointToLayer: function (feature, latlng) {
+                            const finalStyle = {
+                                color: layerStyle.color || "#333333",
+                                weight: layerStyle.weight || 1,
+                                opacity: 1,
+                                fillOpacity: layerStyle.fillOpacity || 0.8,
+                                // L.circleMarker usa 'fillColor', pero si no está definido, usa 'color'
+                                fillColor:
+                                    layerStyle.fillColor || layerStyle.color,
+                                radius: layerStyle.radius || 6,
+                            };
+                            return L.circleMarker(latlng, finalStyle);
+                        },
+                    };
+
+                    const geoJsonLayer = L.geoJSON(data, geoJsonOptions);
+
+                    if (addToMap) {
+                        geoJsonLayer.addTo(map);
+                    }
+                    console.log(`Capa ${layerName} cargada exitosamente.`);
+                    return { name: layerName, layer: geoJsonLayer };
+                })
+                .catch((error) => {
+                    console.error(
+                        `No se pudo cargar la capa ${layerName}:`,
+                        error,
+                    );
+                    return null;
+                });
+        }
+
+        // --- 3. PROCESAMIENTO DINÁMICO DE CAPAS ---
+        geoJsonLayersConfig.forEach((config) => {
+            const promise = loadGeoJSONFromGist(
+                config.gistUrl,
+                config.name,
+                config.style,
+                config.addToMap,
+            );
+            geojsonPromises.push(promise);
+        });
+
+        // Esperar a que TODAS las capas GeoJSON se carguen
+        Promise.all(geojsonPromises)
+            .then((results) => {
+                results.forEach((result) => {
+                    if (result && result.layer) {
+                        overlayMaps[result.name] = result.layer;
+                    }
+                });
+
+                // Reordenamiento de capas (CASO PARTICULAR)
+                if (
+                    result.name === "Equipamientos Urbanos" ||
+                    result.name === "Espacios Verdes"
+                ) {
+                    // Mueve los puntos al frente para que no queden ocultos bajo los polígonos
+                    result.layer.bringToFront();
+                }
+                // Si tienes una capa grande de polígono (como 'Área de Estudio') que quieres detrás:
+                if (result.name === "Área de Estudio") {
+                    result.layer.bringToBack();
+                }
+
+                // --- 4. CONFIGURACIÓN FINAL DEL CONTROL DE CAPAS ---
+                L.control.layers(baseMaps, overlayMaps).addTo(map);
+            })
+            .catch((error) => {
+                console.error(
+                    "Error en la carga de alguna capa GeoJSON:",
+                    error,
+                );
+                L.control.layers(baseMaps).addTo(map);
+            });
+    }
+</script>

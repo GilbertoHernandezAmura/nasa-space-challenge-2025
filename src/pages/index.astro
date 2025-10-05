@@ -2,12 +2,58 @@
 import "../styles/global.css";
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
+
 import Image from "astro/components/Image.astro";
 import heroBg from "../img/testing-bg-hero.png";
 import teamTeledetectados from "../img/team-teledetectados.jpeg";
 
 const titlePage: string =
 	"Rutas de datos hacia ciudades y asentamientos humanos saludables";
+
+// Datos mapas:
+import Map from "../components/Map.astro";
+
+// 1. Definición de datos para el PRIMER Mapa (Ejemplo: Merlo)
+const merloLayers = [
+	{
+		name: "Equipamientos Urbanos",
+		gistUrl:
+			"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/0b9ecb97611cebeb231febed4007cbdb89d534f6/equipamientos.geojson",
+		// Estilo adaptado para puntos (círculos)
+		style: {
+			radius: 8, // Tamaño del círculo
+			fillColor: "#FBBC05", // Amarillo/Dorado
+			color: "#B88A00", // Borde
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.8,
+		},
+		addToMap: true,
+	},
+	{
+		name: "Espacios Verdes (Puntos)",
+		gistUrl:
+			"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/5f3bd962edb8451a46e87c14750a534fc7ef4c50/espacios-verdes.geojson",
+		// Estilo adaptado para puntos (círculos)
+		style: {
+			radius: 6,
+			fillColor: "#34A853", // Verde
+			color: "#187834",
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.7,
+		},
+		addToMap: true,
+	},
+	{
+		name: "Área delimitada",
+		gistUrl:
+			"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/0b9ecb97611cebeb231febed4007cbdb89d534f6/Area.geojson",
+		style: { color: "#FFA500", fillOpacity: 0.2, weight: 3 },
+		addToMap: true,
+	},
+	// Aqui van las capas
+];
 ---
 
 <!doctype html>
@@ -16,6 +62,17 @@ const titlePage: string =
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Teledetectados - NASA Space Apps Challenge</title>
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+			crossorigin=""
+		/>
+		<!-- Make sure you put this AFTER Leaflet's CSS -->
+		<script
+			src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+			integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+			crossorigin=""></script>
 		<style>
 			@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 		</style>
@@ -60,7 +117,7 @@ const titlePage: string =
 			<!-- 2. SECCIÓN DEL PROYECTO -->
 			<section
 				id="proyecto"
-				class="py-16 md:py-24 bg-gray-50 border-t border-gray-200"
+				class="py-16 md:py-24 bg-gray-50 border-t border-gray-200 lg:max-w-5xl mx-auto"
 			>
 				<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 					<h2
@@ -264,8 +321,31 @@ const titlePage: string =
 				</div>
 			</div>
 		</section>
-	</body>
 
-	<!-- 4. FOOTER -->
-	<Footer />
+		<!-- Aca va el mapa -->
+		<Map
+			id="merlo"
+			center={[-32.3422, -65.0144]}
+			zoom={13}
+			title="Caso de Estudio: Merlo, San Luis"
+			subtitle="Capas de Sostenibilidad en Merlo, San Luis"
+			description="Este mapa interactivo muestra las capas analizadas..."
+			layers={merloLayers}
+		/>
+
+		<!-- Segundo mapa -->
+		<!-- <Map
+			id="sanluis"
+			center={[-33.2989, -66.3387]}
+			zoom={12}
+			title="Mapa Secundario: San Luis Capital"
+			subtitle="Zonificación Administrativa"
+			description="Este mapa muestra la zonificación de la capital..."
+			layers={sanLuisLayers}
+		/> -->
+		<!-- Termina el mapa -->
+
+		<!-- 4. FOOTER -->
+		<Footer />
+	</body>
 </html>
