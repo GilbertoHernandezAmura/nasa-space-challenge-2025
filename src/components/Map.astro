@@ -90,7 +90,7 @@ const layersJson = JSON.stringify(layers);
 
         const baseMaps = {
             OpenStreetMap: osmLayer,
-            "Topográfico (Stamen)": newStamenTerrainLayer,
+            Topográfico: newStamenTerrainLayer,
         };
 
         const overlayMaps = {};
@@ -232,27 +232,31 @@ const layersJson = JSON.stringify(layers);
                 });
 
                 // Reordenamiento de capas (CASO PARTICULAR)
-                if (
-                    result.name === "Equipamientos Urbanos" ||
-                    result.name === "Espacios Verdes"
-                ) {
-                    // Mueve los puntos al frente para que no queden ocultos bajo los polígonos
-                    result.layer.bringToFront();
-                }
-                // Si tienes una capa grande de polígono (como 'Área de Estudio') que quieres detrás:
-                if (result.name === "Área de Estudio") {
-                    result.layer.bringToBack();
-                }
+                // if (
+                //     result.name === "Equipamientos Urbanos" ||
+                //     result.name === "Espacios Verdes"
+                // ) {
+                //     // Mueve los puntos al frente para que no queden ocultos bajo los polígonos
+                //     result.layer.bringToFront();
+                // }
+                // // Si tienes una capa grande de polígono (como 'Área de Estudio') que quieres detrás:
+                // if (result.name === "Área de Estudio") {
+                //     result.layer.bringToBack();
+                // }
 
                 // --- 4. CONFIGURACIÓN FINAL DEL CONTROL DE CAPAS ---
-                L.control.layers(baseMaps, overlayMaps).addTo(map);
+                L.control
+                    .layers(baseMaps, overlayMaps, { collapsed: false })
+                    .addTo(map);
             })
             .catch((error) => {
                 console.error(
                     "Error en la carga de alguna capa GeoJSON:",
                     error,
                 );
-                L.control.layers(baseMaps).addTo(map);
+                // Si hubo un error en la carga de overlays, mostramos el control
+                // de capas igualmente (sin overlays) y forzamos que esté expandido.
+                L.control.layers(baseMaps, {}, { collapsed: false }).addTo(map);
             });
     }
 </script>

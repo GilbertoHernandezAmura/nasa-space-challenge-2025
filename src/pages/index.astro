@@ -4,17 +4,15 @@ import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
 
 import Image from "astro/components/Image.astro";
-import heroBg from "../img/testing-bg-hero.png";
 import teamTeledetectados from "../img/team-teledetectados.jpeg";
 
-const titlePage: string =
-	"Rutas de datos hacia ciudades y asentamientos humanos saludables";
+const titlePage: string = "Teledetectados - NASA Space Apps Challenge 2025";
 
 // Datos mapas:
 import Map from "../components/Map.astro";
 
 // 1. Definición de datos para el PRIMER Mapa (Ejemplo: Merlo)
-const merloLayers = [
+const merloMapaEquipamientos = [
 	{
 		name: "Equipamientos Urbanos",
 		gistUrl:
@@ -54,6 +52,91 @@ const merloLayers = [
 	},
 	// Aqui van las capas
 ];
+
+const merloMapaCrecimiento = [
+	{
+		name: "Crecimiento Urbano",
+		gistUrl:
+			"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/e81404a8386823fd53ebda1d94ad2d050b2c5c25/Crecimiento.geojson",
+		style: {
+			// Se mantiene el color y estilo que te gustó:
+			fillColor: "#154360", // Azul Marino Oscuro (Intenso, para el Crecimiento)
+			fillOpacity: 0.9,
+			weight: 1.5,
+			color: "#0E3147",
+		},
+		addToMap: true,
+	},
+	{
+		name: "Urbano 2010",
+		gistUrl:
+			"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/e81404a8386823fd53ebda1d94ad2d050b2c5c25/Urbano2010.geojson",
+		style: {
+			// Un color terroso que contrasta bien con el Azul y el Verde.
+			fillColor: "#E67E22", // Naranja Calabaza (Color Cálido)
+			fillOpacity: 0.88,
+			weight: 1,
+			color: "#D35400", // Naranja más oscuro para el borde.
+		},
+		addToMap: true,
+	},
+	{
+		name: "Urbano 2024",
+		gistUrl:
+			"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/e81404a8386823fd53ebda1d94ad2d050b2c5c25/Urbano2024.geojson",
+		style: {
+			// Un color verde profundo para crear un fuerte contraste con el Naranja.
+			fillColor: "#7DCEA0", // Verde Oliva Suave
+			fillOpacity: 0.92,
+			weight: 1.5,
+			color: "#58B48B", // Verde más saturado para el borde.
+		},
+		addToMap: true,
+	},
+];
+
+const merloMapaProbabilidadesCrecimiento = [
+	{
+		name: "Probabilidad 20%",
+		gistUrl:
+			"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/34416d87908c22422cfe9578d2aa581cba6c393c/probabilidad20.geojson",
+		style: {
+			radius: 8, // Tamaño del círculo
+			fillColor: "#FBBC05", // Amarillo/Dorado
+			color: "#B88A00", // Borde
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.8,
+		},
+		addToMap: true,
+	},
+	{
+		name: "Probabilidad 20-40%",
+		gistUrl:
+			"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/34416d87908c22422cfe9578d2aa581cba6c393c/probabilidad20-40.geojson",
+		style: {
+			// Un color terroso que contrasta bien con el Azul y el Verde.
+			fillColor: "#E67E22", // Naranja Calabaza (Color Cálido)
+			fillOpacity: 0.88,
+			weight: 1,
+			color: "#D35400", // Naranja más oscuro para el borde.
+		},
+		addToMap: true,
+	},
+	// {
+	// 	name: "Urbano 2024",
+	// 	gistUrl:
+	// 		"https://gist.githubusercontent.com/GilbertoHernandezAmura/9875cfcb7e69f4e4dbd393a5310029f4/raw/e81404a8386823fd53ebda1d94ad2d050b2c5c25/Urbano2024.geojson",
+	// 	style: {
+	// 		// Un color verde profundo para crear un fuerte contraste con el Naranja.
+	// 		fillColor: "#7DCEA0", // Verde Oliva Suave
+	// 		fillOpacity: 0.92,
+	// 		weight: 1.5,
+	// 		color: "#58B48B", // Verde más saturado para el borde.
+	// 	},
+	// 	addToMap: true,
+	// },
+];
 ---
 
 <!doctype html>
@@ -61,7 +144,7 @@ const merloLayers = [
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Teledetectados - NASA Space Apps Challenge</title>
+		<title>{titlePage}</title>
 		<link
 			rel="stylesheet"
 			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -218,12 +301,12 @@ const merloLayers = [
 								Ejecución con caso de estudio
 							</li>
 						</ol>
-						<p class="text-gray-600 leading-relaxed text-lg mt-6">
+						<!-- <p class="text-gray-600 leading-relaxed text-lg mt-6">
 							Desde la ideación hasta el prototipo final, nuestro
 							proceso se centró en la **metodología ágil**,
 							permitiendo iteraciones rápidas y validación
 							constante con los datos disponibles.
-						</p>
+						</p> -->
 					</div>
 
 					<!-- RESULTADOS -->
@@ -300,12 +383,11 @@ const merloLayers = [
 							class="text-gray-700 leading-relaxed text-lg space-y-4"
 						>
 							Somos un equipo multidisciplinario de seis
-							integrantes (dos docentes y tres estudiantes),
-							provenientes de la UNLC y otras instituciones.
-							Nuestra fuerza reside en la combinación de
-							Planificación Territorial, Ciencias de la Atmósfera,
-							Ingenierías (Recursos Hídricos, Ambiental y
-							Mecatrónica).
+							integrantes, provenientes de la UNLC y otras
+							instituciones. Nuestra fuerza reside en la
+							combinación de Planificación Territorial, Ciencias
+							de la Atmósfera, Ingenierías (Recursos Hídricos,
+							Ambiental y Mecatrónica).
 						</p>
 						<p class="text-gray-700 leading-relaxed text-lg mt-4">
 							Esta sinergia de conocimientos fue esencial para
@@ -330,19 +412,31 @@ const merloLayers = [
 			title="Caso de Estudio: Merlo, San Luis"
 			subtitle="Capas de Sostenibilidad en Merlo, San Luis"
 			description="Este mapa interactivo muestra las capas analizadas..."
-			layers={merloLayers}
+			layers={merloMapaEquipamientos}
 		/>
 
 		<!-- Segundo mapa -->
-		<!-- <Map
-			id="sanluis"
-			center={[-33.2989, -66.3387]}
-			zoom={12}
-			title="Mapa Secundario: San Luis Capital"
-			subtitle="Zonificación Administrativa"
-			description="Este mapa muestra la zonificación de la capital..."
-			layers={sanLuisLayers}
-		/> -->
+		<Map
+			id="merlo-2"
+			center={[-32.3422, -65.0144]}
+			zoom={13}
+			title="Caso de Estudio: Merlo, San Luis"
+			subtitle="Capas de Crecimiento en Merlo, San Luis"
+			description="Este mapa interactivo muestra las capas analizadas..."
+			layers={merloMapaCrecimiento}
+		/>
+		<!-- Termina el mapa -->
+
+		<!-- Tercer mapa -->
+		<Map
+			id="merlo-3"
+			center={[-32.3422, -65.0144]}
+			zoom={13}
+			title="Caso de Estudio: Merlo, San Luis"
+			subtitle="Capas de Crecimiento en Merlo, San Luis"
+			description="Este mapa interactivo muestra las capas analizadas..."
+			layers={merloMapaProbabilidadesCrecimiento}
+		/>
 		<!-- Termina el mapa -->
 
 		<!-- 4. FOOTER -->
